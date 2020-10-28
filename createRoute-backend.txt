@@ -1,0 +1,14 @@
+const express = require('express');
+const Product = require('../Product');
+const Router = express.Router();
+
+Router.post('/createproduct',(req,res)=>{
+        console.log("It entered into the create form");
+        const product = new Product(req.body);
+        product.save().then(()=>{
+            console.log("Product saved in the database");
+            return res.send("It stored in the database");
+        });
+});
+
+module.exports = Router;

@@ -1,0 +1,11 @@
+const express = require('express');
+const Product = require('../Product');
+const Router = express.Router();
+
+Router.get('/getallproducts',(req,res)=>{
+    Product.find().exec((err,products)=>{
+       res.send(products);
+    });
+});
+
+module.exports = Router;

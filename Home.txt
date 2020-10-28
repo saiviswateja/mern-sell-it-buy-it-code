@@ -1,0 +1,86 @@
+import React from 'react';
+import {Link} from 'react-router-dom';
+
+const Home = ()=>{
+    return (
+        <div>
+            <nav className="navbar navbar-dark bg-dark">
+                <span className="navbar-brand ml-20">SellItBuyIt</span>
+                <Link to='/adminlogin'><button className="btn btn-primary">Admin Portal</button></Link>
+            </nav>
+            <div className="jumbotron">
+                <div className="container-fluid">
+                    <div className="row row-header">
+                    <div class="col-12 col-sm-6">
+                            <h1 className="text-success">SellItBuyIt</h1>
+                            <p className="text-danger">A portal that will make you easy to buy or sell the used products. Why to waste the money buying the new products when you can buy good conditioned products</p>
+                        </div>
+                    </div>
+                </div>
+            </div>       
+            <div className="container">
+                <div className="row">
+                    <div className="col-sm-6">
+                    <div class="card text-white bg-warning mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Sell Away</h5>
+                            <p class="card-text">Do want to sell your product use our website to sell them and within less time you can sell it easily</p>
+                            <Link to="/sellcomponent" className="btn btn-success">Sell Away</Link>
+                        </div>
+                        </div>
+                    </div>
+                    <div className="col-sm-6">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Buy It</h5>
+                            <p class="card-text">Wanna buy a new mobile, car, property,.... Visit our site which helps to find who are ready to sell it</p>
+                            <Link to="/buycomponent" className="btn btn-success">Buy It</Link>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="jumbotron">
+                <div className="conatiner">
+                    <div className="row">
+                    <div class="col-6 offset-1 col-sm-4">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/buycomponent">Buy Products</Link></li>
+                        <li><Link to="/sellcomponent">Sell Products</Link></li>
+                        <li><Link to="/adminlogin">Admin Portal</Link></li>
+                    </ul>
+                    </div>
+                    
+                    <div className="col float-right">
+                        <h5>
+                            Our Address
+                        </h5>
+                        <div>
+                            12-345<br/>
+                            Valuelabs<br/>
+                            Madhapur<br/>
+                            LancoHills<br/>
+                            Hyderabad                            
+                        </div>
+
+                    </div>
+                    <div className="col">
+                        <h5>
+                            Conatct Us
+                        </h5>
+                        <div>
+                        If you have any queries feel free to contact us<br/>
+                        Our mobile number is 1234567891<br/>
+                        Our email id is sellitbuyit@gmail.com<br/>                   
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        )
+}
+
+export default Home;

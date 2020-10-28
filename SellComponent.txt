@@ -1,0 +1,289 @@
+import React, {Component} from 'react';
+import emailjs from 'emailjs-com';
+import axios from 'axios';
+import { NavLink } from 'react-router-dom';
+
+class SellComponent extends Component{
+    constructor(){
+        super();
+        this.state = {
+            name:"",
+            contact:"",
+            address:"",
+            productType:"",
+            description:"",
+            priceSetted:"",
+            aadhar:"",
+            productBrand:"",
+            email:"",
+            state:"",
+            district:"",
+            city:"",
+            sucess:false,
+            error:false,
+            conerror:false,
+            locationData :{},
+            locArray:[],
+            cities:[],
+            states:[],
+            districts:[],
+            flagDistrict:false,
+            flagCity:false,
+            options:['None','Mobile','Car','Property','Furniture','Electronics and Appliances','Bike'
+            ,'Books','Sports','Other']
+        }
+    }
+    componentDidMount(){
+        axios.get('https://indian-cities-api-nocbegfhqg.now.sh/cities')
+        .then(response=>{
+            this.setState({
+                locationData:response.data
+            })
+            const cities=[];
+            const districts=[];
+            const states=[];
+            const tempLocArray = [];
+            this.state.locationData.map(loc=>{
+                tempLocArray.push([loc.State,loc.District,loc.City]);
+                cities.push(loc.City);
+                states.push(loc.State);
+                districts.push(loc.City);
+            });
+            this.setState({
+                locArray:tempLocArray,
+                cities,
+                districts,
+                states
+            })
+            const dupRemoved = states.filter((value,index)=>states.indexOf(value)===index);
+            var selectOption = document.getElementById('state');
+            dupRemoved.map(state=>{
+                var option = document.createElement("option");
+                option.text=state;
+                option.name=state;
+                selectOption.add(option);
+            });
+
+        })
+        .catch(err=>{
+            console.log("Error occured");
+        });        
+    }
+    getDistrict(){
+        var selectOption = document.getElementById('state').value;
+        var tempDistricts=[];
+        for(var i in this.state.locArray){
+            if(this.state.locArray[i][0]===selectOption){
+                tempDistricts.push(this.state.locArray[i][1])
+            }
+        }
+        const dupRemoved = tempDistricts.filter((value,index)=>tempDistricts.indexOf(value)===index);
+        
+        var selectOption = document.getElementById('district');
+            for(i=selectOption.length-1;i>0;i--){
+                selectOption.remove(i);
+            }
+            dupRemoved.map(district=>{
+                var option = document.createElement("option");
+                option.text=district;
+                option.name=district;
+                selectOption.add(option);
+            });
+        
+
+    }
+    getCity(){
+        var selectOption = document.getElementById('district').value;
+        var tempCities=[];
+        for(var i in this.state.locArray){
+            if(this.state.locArray[i][1]===selectOption){
+                tempCities.push(this.state.locArray[i][2]);
+            }
+        }
+        const dupRemoved = tempCities.filter((value,index)=>tempCities.indexOf(value)===index);
+        var selectOption = document.getElementById('city');
+        for(i=selectOption.length-1;i>0;i--){
+            selectOption.remove(i);
+        }
+            dupRemoved.map(city=>{
+                var option = document.createElement("option");
+                option.text=city;
+                option.name=city;
+                selectOption.add(option);
+            });
+        
+
+    }
+
+    
+    onAddBuyersList(event){
+        event.preventDefault();
+        event.preventDefault();
+        if(document.getElementById('name').value==="" || document.getElementById('contact').value===""||
+        document.getElementById('mailid').value===""||document.getElementById('address').value===""||document.getElementById('prod').value==="None"||document.getElementById('desc').value===""||
+        document.getElementById('price').value===""||document.getElementById('aadhar').value===""||document.getElementById('productBrand').value===""||document.getElementById('state').value==="None"||document.getElementById('district').value==="None"||document.getElementById('city').value==="None"){
+            this.setState({
+                error:true,
+                sucess:false
+            })
+            return
+        }
+        if(document.getElementById('contact').value.length!==10){
+            alert("Enter valid phone number");
+            return
+        }
+        if(document.getElementById('aadhar').value.length!==12){
+            alert("Enter valid Aadhar number");
+            return
+        }
+        emailjs.sendForm('gmail', 'template_Ln99svCE', event.target, 'user_VbABSPD9ZIkUUNFlLO4fT')
+                    .then((result) => {
+                        console.log(result.text);
+                        console.log("email sent");
+                    }, (error) => {
+                        console.log(error.text);
+                    });
+        this.setState({
+            name:document.getElementById('name').value,
+            contact:document.getElementById('contact').value,
+            email:document.getElementById('mailid').value,
+            address:document.getElementById('address').value,
+            productType:document.getElementById('prod').value,
+            description:document.getElementById('desc').value,
+            priceSetted:document.getElementById('price').value,
+            aadhar:document.getElementById('aadhar').value,
+            productBrand:document.getElementById('productBrand').value,
+            state:document.getElementById('state').value,
+            district:document.getElementById('district').value,
+            city:document.getElementById('city').value,
+            flagCity:false,
+            flagDistrict:false
+        },()=>{
+            axios.post('http://localhost:8000/createproduct',{
+                name:this.state.name,
+                contact:this.state.contact,
+                email:this.state.email,
+                address:this.state.address,
+                state:this.state.state,
+                city:this.state.city,
+                district:this.state.district,
+                productType:this.state.productType,
+                description:this.state.description,
+                priceSetted:this.state.priceSetted,
+                aadhar:this.state.aadhar,
+                productBrand:this.state.productBrand
+            })
+            .then(()=>{
+                this.setState({
+                    name:"",
+                    contact:"",
+                    address:"",
+                    productType:"",
+                    description:"",
+                    priceSetted:"",
+                    email:"",
+                    aadhar:"",
+                    productBrand:"",
+                    sucess:true,
+                    error:false
+                })
+                
+                document.getElementById('name').value="";
+                document.getElementById('contact').value="";
+                document.getElementById('mailid').value="";
+                document.getElementById('address').value="";
+                document.getElementById('desc').value="";
+                document.getElementById('price').value="";
+                document.getElementById('aadhar').value="";
+                document.getElementById('productBrand').value="";
+            })
+            .catch(err=>{
+                this.setState({
+                    sucess:false
+                })
+                console.log(err);
+            });
+
+        })
+    }
+    render(){
+        return (
+            <div>
+            <nav className="navbar navbar-dark bg-dark">
+                <NavLink to="/" className="navbar-brand ml-20">SellItBuyIt</NavLink>
+            </nav>
+            <div className="jumbotron">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Sell the Things you dont need in ease</h5>
+                    <p class="card-text">Please follow the below instructions</p>
+                    <p class="card-text">Mention your details as per Aadhar card</p>
+                    <p class="card-text">Mention the contact details correctly because those are shared with the buyers</p>
+                    <p className="card-text">Soon our representative will conatct you to verify the details</p>
+                </div>
+            </div>
+            <form className="contact-form" onSubmit={this.onAddBuyersList.bind(this)}>
+            <div className="row">
+                <div className="col">
+                <label>Name of the Seller</label>
+                <input type="text" id="name" className="form-control"></input>
+                </div>
+                <div className="col">
+                <label>Contact Number</label>
+                <input type="number" id="contact" className="form-control"></input>
+                </div>
+                <div className="col">
+                <label>Email Id</label>
+                <input type="email" id="mailid" className="form-control"></input>
+                </div>
+            </div>
+                {/* <label>Name of the Seller</label>
+                <input type="text" id="name" className="form-control"></input>
+                <label>Contact Number</label>
+                <input type="number" id="contact" className="form-control"></input>
+                <label>Email Id</label>
+                <input type="email" id="mailid" className="form-control"></input> */}
+                <label>Address</label>
+                <input type="text" id="address" className="form-control"></input>
+                <label>State</label>
+                <select className="form-control form-control-lg" id="state" onChange={this.getDistrict.bind(this)}>
+                <option value="None">None</option>
+                </select>
+                <label>District</label>
+                <select className="form-control form-control-lg" id="district" onChange={this.getCity.bind(this)}>
+                <option value="None">None</option>
+                </select>
+                <label>City</label>
+                <select className="form-control form-control-lg" id="city">
+                <option value="None">None</option>
+                </select>
+                <label>Type of the Product</label>
+                <select className="form-control form-control-lg" id="prod">
+                    {
+                        this.state.options.map(optionList=>(
+                        <option value={optionList}>{optionList}</option>
+                        ))
+                    }
+                </select>
+                <label>Product Brand</label>
+                <input type="productBrand" id="productBrand" className="form-control"></input>
+                <label>Description of the Product</label>
+                <textarea id="desc" className="form-control" rows="8"></textarea>
+                <label>For what Price Do you want to sell</label>
+                <input type="number" id="price" className="form-control"></input>
+                <label>Aadhar Number</label>
+                <input type="number" id="aadhar" className="form-control"></input>
+                <div className="text-center">
+                <button type="submit" className="btn btn-primary mt-5" color="green">Upload to Buyers List</button>
+                </div>
+            </form>
+            {this.state.sucess && <div className="alert alert-success mt-3">Product Uploaded Successfully</div>}
+            {this.state.error && <div className="alert alert-danger mt-3">Please fill the required Deatils</div>}
+            {this.state.conerror && <div className="alert alert-danger mt-3">Invalid Mobile number</div>} 
+        </div>
+        </div>
+        );
+    }
+}
+
+export default SellComponent;

@@ -1,0 +1,94 @@
+import React,{Component} from 'react';
+import { Link } from 'react-router-dom';
+
+
+class ShowComponent extends Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            product:props.location.aboutProduct,
+            loaded:false
+        }
+    }
+    componentWillMount(){
+        try{
+            console.log(this.state.product.name);
+            console.log(this.state.product);
+        }
+        catch(err){
+            this.setState({
+                loaded:true
+            })
+        }
+    }
+    render()
+    {
+        return(<div>
+            
+            <nav className="navbar navbar-dark bg-dark">
+                <span className="navbar-brand ml-20">SellItBuyIt</span>
+            </nav>
+            {this.state.loaded && 
+                <div className="jumbotron">
+                    <span className="alert alert-danger mt-10 align-middle">Error Grabbing the Details Goto <Link to='/buycomponent'>BuyComponent</Link></span>
+                </div>
+            }
+            {!this.state.loaded &&
+            <div className="jumbotron">
+            <div className="container-fluid">
+            <ul className="list-group">
+
+            <li className="list-group-item">
+            <div className="row">
+            <span className="col text-success" style={{fontSize:'3vw'}}>Name of the Seller :</span><span className="col text-primary" style={{fontSize:'3vw'}}>{this.state.product.name}</span>
+            </div>
+            </li>
+            <li className="list-group-item">
+            <div className="row">
+            <span className="col text-success" style={{fontSize:'3vw'}}>Contact Number :</span><span className="col text-primary" style={{fontSize:'3vw'}}>{this.state.product.contact}</span>
+            </div>
+            </li>
+            <li className="list-group-item">
+            <div className="row">
+            <span className="col text-success" style={{fontSize:'3vw'}}>Address :</span><span className="col text-primary" style={{fontSize:'3vw'}}>{this.state.product.address}</span>
+            </div>
+            </li>
+            <li className="list-group-item">
+            <div className="row">
+            <span className="col text-success" style={{fontSize:'3vw'}}>State :</span><span className="col text-primary" style={{fontSize:'3vw'}}>{this.state.product.state}</span>
+            </div>
+            </li>
+            <li className="list-group-item">
+            <div className="row">
+            <span className="col text-success" style={{fontSize:'3vw'}}>District :</span><span className="col text-primary" style={{fontSize:'3vw'}}>{this.state.product.district}</span>
+            </div>
+            </li>
+            <li className="list-group-item">
+            <div className="row">
+            <span className="col text-success" style={{fontSize:'3vw'}}>City :</span><span className="col text-primary" style={{fontSize:'3vw'}}>{this.state.product.city}</span>
+            </div>
+            </li>
+            <li className="list-group-item">
+            <div className="row">
+            <span className="col text-success" style={{fontSize:'3vw'}}>Description :</span><span className="col text-primary" style={{fontSize:'3vw'}}>{this.state.product.description}</span>
+            </div>
+            </li>
+            <li className="list-group-item">
+            <div className="row">
+            <span className="col text-success" style={{fontSize:'3vw'}}>Price setted By the Compiler :</span><span className="col text-primary" style={{fontSize:'3vw'}}>{this.state.product.priceSetted}</span>
+            </div>
+            </li>
+            <li className="list-group-item">
+            <div className="row">
+            <span className="col text-success" style={{fontSize:'3vw'}}>Email of the Seller :</span><span className="col text-primary" style={{fontSize:'3vw'}}>{this.state.product.email}</span>
+            </div>
+            </li>
+            </ul>
+            </div>
+            </div>
+            }
+            </div>)
+    }
+}
+
+export default ShowComponent;

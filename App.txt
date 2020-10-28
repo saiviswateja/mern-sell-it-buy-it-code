@@ -1,0 +1,25 @@
+import React from 'react';
+import './App.css';
+import SellComponent from './components/SellComponent';
+import BuyComponent from './components/BuyComponent';
+import { BrowserRouter, Route } from 'react-router-dom';
+import ShowComponent from './components/ShowComponent';
+import Home from './components/Home';
+import DeleteProduct from './components/DeleteProduct';
+import AdminLogin from './components/AdminLogin';
+
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Route path="/" exact component={Home}></Route>
+      <Route path="/buycomponent" exact component={BuyComponent}></Route>
+      <Route path="/sellcomponent" exact component={SellComponent}></Route>
+      <Route path="/showcomponent" exact component={ShowComponent}></Route>
+      <Route path="/deletecomponent" exact component={DeleteProduct}></Route>
+      <Route path="/adminlogin" exact component={AdminLogin}></Route>
+    </BrowserRouter>
+  );
+}
+
+export default App;

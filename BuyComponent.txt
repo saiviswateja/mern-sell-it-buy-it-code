@@ -1,0 +1,259 @@
+import React,{Component} from 'react';
+import axios from 'axios';
+import {Link, NavLink} from 'react-router-dom';
+
+class BuyComponent extends Component{
+    constructor(){
+        super();
+        this.state = {
+            products:[],
+            noproducts:false,
+            tempProducts:[],
+            noSearch:false,
+            cities:[],
+            tabProducts:[],
+            totProducts:[],
+            picUrls:{
+                "Mobile":"https://hamariweb.com/mobiles/LargeImages/4449_01.jpg",
+                "Car":"https://img.etimg.com/thumb/msid-73268134,width-640,resizemode-4,imgsize-35417/surprise-heard-of-a-sony-car.jpg",
+                "Property":"https://cdn.geekwire.com/wp-content/uploads/2018/05/ISm2ws8xojvwbs1000000000.jpg",
+                "Furniture":"https://images-na.ssl-images-amazon.com/images/I/611C8z-xBfL._SL1000_.jpg",
+                "Electronics and Appliances":"https://image.freepik.com/free-photo/black-music-headphone-with-laptop-computer-wooden-table-top-view_73110-4202.jpg",
+                "Bike":"https://media.zigcdn.com/media/model/2019/Sep/splendor-plus-right-side-view_600x400.jpg",
+                "Books":"https://media.wired.com/photos/5be4cd03db23f3775e466767/master/w_2560%2Cc_limit/books-521812297.jpg",
+                "Sports":"https://www.sentinelassam.com/wp-content/uploads/2018/09/sports.jpg",
+                "Other":""
+            }
+        }
+    }
+    componentDidMount(){
+        axios.get('http://localhost:8000/getallproducts')
+        .then((response)=>{
+            for(var i in response.data){
+                response.data[i]['pic']=this.state.picUrls[response.data[i].productType];
+            }
+            if(response.data.length===0){
+                this.setState({
+                    noproducts:true
+                })
+            }
+            else{
+            this.setState({
+                products:response.data,
+                tempProducts:response.data
+            },()=>{
+                var tabcount=0;
+                var tempTabCards = [];
+                var totTabCards =[];
+                for(var i in this.state.products){
+                    tempTabCards.push(this.state.products[i]);
+                    if(tabcount===3 || this.state.products.length-1==i){
+                        tabcount=0; 
+                        totTabCards.push(tempTabCards);
+                         tempTabCards=[]
+                    }
+                    else
+                    {
+                        tabcount+=1
+                    }
+                }
+                this.setState({
+                    totProducts:totTabCards
+                },()=>{
+                    console.log("Total products in the arra f arrays is");
+                    console.log(this.state.totProducts);
+                })
+            })
+            }
+        })
+        .catch(err=>{
+            console.log(err);
+        });
+        axios.get('https://indian-cities-api-nocbegfhqg.now.sh/cities')
+        .then(response=>{
+            const tempCities = response.data.map(data=>{
+                return data.City
+            })   
+            this.setState({
+                cities:tempCities
+            })
+            var selectOption = document.getElementById("searchCityInput");
+            tempCities.map(city=>{
+                var option = document.createElement("option");
+                option.text=city;
+                option.name=city;
+                selectOption.add(option);
+            })
+        })
+        .catch(err=>{
+            console.log(err)
+        });
+    }
+    searchClicked(event){
+        event.preventDefault();
+        if(this.state.noproducts){
+            return
+        }
+        var citySelectedList = []
+        const city = document.getElementById('searchCityInput').value;
+        const category = document.getElementById('searchInput').value;
+        if(city==="All"){
+            citySelectedList = this.state.tempProducts
+        }
+        else{
+        citySelectedList = this.state.tempProducts.filter(product=>{
+            if(city===product.city){
+                return product
+            }
+        });
+        }
+        if(category==="None"){
+            this.setState({
+                products:citySelectedList
+            },()=>{
+                var tabcount=0;
+                var tempTabCards = [];
+                var totTabCards =[];
+                for(var i in this.state.products){
+                    tempTabCards.push(this.state.products[i]);
+                    if(tabcount===3 || this.state.products.length-1==i){
+                        tabcount=0; 
+                        totTabCards.push(tempTabCards);
+                         tempTabCards=[]
+                    }
+                    else
+                    {
+                        tabcount+=1
+                    }
+                }
+                this.setState({
+                    totProducts:totTabCards
+                },()=>{
+                    console.log("Total products in the arra f arrays is");
+                    console.log(this.state.totProducts);
+                })
+            if(this.state.products.length===0){
+                this.setState({
+                    noSearch:true
+                })
+            }
+            else{
+                this.setState({
+                    noSearch:false
+                })
+            }})
+            return;
+        }
+        const categorySelectedList = citySelectedList.filter(product=>{
+            if(category===product.productType){
+                return product
+            }
+        });        
+        this.setState({
+            products:categorySelectedList
+        },()=>{
+                var tabcount=0;
+                var tempTabCards = [];
+                var totTabCards =[];
+                for(var i in this.state.products){
+                    tempTabCards.push(this.state.products[i]);
+                    if(tabcount===3 || this.state.products.length-1==i){
+                        tabcount=0; 
+                        totTabCards.push(tempTabCards);
+                         tempTabCards=[]
+                    }
+                    else
+                    {
+                        tabcount+=1
+                    }
+                }
+                this.setState({
+                    totProducts:totTabCards
+                },()=>{
+                    console.log("Total products in the arra f arrays is");
+                    console.log(this.state.totProducts);
+                })
+            if(this.state.products.length===0){
+            this.setState({
+                noSearch:true
+            })
+        }
+        else{
+            this.setState({
+                noSearch:false
+            })
+        }
+        })
+    }
+
+    render(){
+        return (
+            <div>
+                <nav className="navbar navbar-dark bg-dark">
+                <NavLink to="/" className="navbar-brand ml-20">SellItBuyIt</NavLink>
+                <form className="form-inline my-2 my-lg-0">
+                <span className="alert text-info">Search In </span>
+                <select className="form-control mr-sm-2" id="searchCityInput">
+                    <option value="All">All Cities</option>
+                </select>
+                <span className="alert text-info">for</span>
+                <select className="form-control mr-sm-2" id="searchInput">
+                    <option value="None">All</option>
+                    <option value="Mobile">Mobile</option>
+                    <option value="Car">Car</option>
+                    <option value="Property">Property</option>
+                    <option value="Furniture">Furniture</option>
+                    <option value="Electronics and Appliances">Electronics</option>
+                    <option value="Bike">Bike</option>
+                    <option value="Books">Books</option>
+                    <option value="Sports">Sports</option>
+                    <option value="other">other</option>
+                </select>
+                <button className="btn btn-outline-success my-2 my-sm-0" onClick={this.searchClicked.bind(this)}>Search By category</button>
+                </form>
+                </nav>
+                {this.state.noSearch && 
+                <div className="alert alert-danger mt-3 text-center">No Products found in the selected city and Category</div>
+                }
+                {this.state.noproducts && 
+                <div className="jumbotron text-center">
+                    <span className="alert alert-danger mt-10">No Products that are posted in the database</span>
+                </div>
+                }
+                {!this.state.noproducts &&
+                <div className="jumbotron">
+                <div className="container-fluid">
+                    {
+                        this.state.totProducts.map((productArray)=>(
+                            <div className="row">
+                                {
+                                     productArray.map((product)=>(
+                                            <div className="col-sm-3">
+                                            <div className="card"  key={product._id}>
+                                                <div className="card-body">
+                                                    <img className="card-img-top" src={product.pic} id="imgtag" alt="Card image cap"/>
+                                                    <h5 className="card-title">{product.productBrand}</h5>
+                                                    <span className="card-text btn btn-">Price is {product.priceSetted} Rupess</span>
+                                                    <Link to={{
+                                                        pathname:'/showcomponent',
+                                                        aboutProduct:product
+                                                    }}><button className="btn btn-success btn-lg float-right">Click here to know more details</button></Link>
+                                                </div>  
+                                            </div>
+                                            </div>        
+                                     ))
+                                }
+                            </div>
+                     
+                        ))
+                    }
+                    
+                </div>
+                </div>
+                }
+            </div>
+        );
+    }
+}
+
+export default BuyComponent;

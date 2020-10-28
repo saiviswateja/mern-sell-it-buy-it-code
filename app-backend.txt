@@ -1,0 +1,38 @@
+const mongoose = require('mongoose');
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const createRoute = require('./Routes/createRoute');
+const getProductRoute = require('./Routes/getProductRoute');
+const deleteRoute = require('./Routes/deleteRoute');
+
+app.use(bodyParser.json());
+app.use(cors());
+app.use(createRoute);
+app.use(getProductRoute);
+app.use(deleteRoute);
+
+
+app.get('/',(req,res)=>{
+    return res.send("Updates Done we have to deal with the routes then");
+});
+
+// mongoose.connect("mongodb+srv://viswateja:viswateja@cluster0.fxkxw.mongodb.net/product?retryWrites=true&w=majority",{useNewUrlParser:true,useUnifiedTopology:true,useCreateIndex:true})
+// .then(()=>{
+//     console.log("Mongo DB connected");
+// })
+// .catch(err=>{
+//     console.log(err);
+// });
+mongoose.connect("mongodb://localhost:27017/product",{useNewUrlParser:true,useUnifiedTopology:true,useCreateIndex:true})
+.then(()=>{
+    console.log("Mongo DB connected");
+})
+.catch(err=>{
+    console.log(err);
+});
+
+app.listen(8000,()=>{
+    console.log("Server Running")
+});

@@ -1,0 +1,108 @@
+import React, {Component} from 'react';
+import axios from 'axios';
+import {Link, NavLink} from 'react-router-dom';
+
+class DeleteProduct extends Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            products:[],
+            noproducts:false,
+            loaded:false,
+            verified:props.location.verified
+        }
+    }
+    componentWillMount(){
+        try{
+            if(this.state.verified==="verified"){
+                throw "not defined"
+            }
+        }
+        catch(err){
+            this.setState({
+                loaded:true
+            })
+        }
+    }
+    componentDidMount(){
+        axios.get('http://localhost:8000/getallproducts')
+        .then((response)=>{
+            if(response.data.length===0){
+                this.setState({
+                    noproducts:true
+                })
+            }
+            else{
+            this.setState({
+                products:response.data
+            })
+            }
+        })
+        .catch(err=>{
+            console.log(err);
+        });
+    }
+    deleteClicked(id,e){
+        axios.post('http://localhost:8000/deleteproduct',{
+            _id:id
+        })
+        .then(response=>{
+            axios.get('http://localhost:8000/getallproducts')
+            .then(response=>{
+                if(response.data.length===0){
+                    this.setState({
+                        noproducts:true
+                    })
+                }
+                this.setState({
+                    products:response.data
+                })
+            })
+            .catch(err=>{
+                console.log(err)
+            });
+        })
+        .catch(err=>{
+            console.log(err)
+        });
+    }
+    render(){
+        return (<div>
+            <nav className="navbar navbar-dark bg-dark">
+                <NavLink to="/" className="navbar-brand ml-20">SellItBuyIt</NavLink>
+                <span className="alert alert-success mt-3 float-right">Welcome Admin, Manage the Products</span>
+            </nav>
+            {!this.state.loaded && <div className="jumbotron">
+                    <span className="alert alert-danger mt-10 align-middle">Login with the credentials again<Link to='/adminlogin'> Login Page</Link></span>
+                </div>}
+            {this.state.loaded &&
+            <div className="jumbotron">
+                    {this.state.noproducts &&
+                    <div className="text-center">
+                        <span className="alert alert-danger">No one are interested to sell heir products</span>
+                    </div>
+                    }
+                    {
+                        !this.state.noproducts
+                        &&
+                        this.state.products.map((product)=>(
+                            <div className="card" key={product._id}>
+                                <div className="card-body">
+                                    <h5 className="card-title">{product.productBrand}</h5>
+                                    <span className="card-text">Product Type is {product.productType}</span><br/>
+                                    <span className="card-text">Price is {product.priceSetted} Rupess</span><br/>
+                                    <span className="card-text">Name of the seller is {product.name} </span><br/>
+                                    <span className="card-text">Mobile Number is {product.contact}</span><br/>
+                                    <span className="card-text">Aadhar Number is {product.aadhar} </span><br/>
+                                    <button className="btn btn-success btn-lg float-right" onClick={(e)=>this.deleteClicked(product._id,e)}>Delete Product</button>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+    }
+        </div>);
+    }
+}
+
+export default DeleteProduct;

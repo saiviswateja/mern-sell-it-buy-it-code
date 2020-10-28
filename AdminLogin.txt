@@ -1,0 +1,64 @@
+import React,{Component} from 'react';
+import {Link, NavLink} from 'react-router-dom';
+
+class AdminLogin extends Component{
+    constructor(){
+        super();
+        this.state = {
+            verified:false,
+            wrongPassword:false
+        }
+    }
+    render(){
+        return(
+            <div>
+            <nav className="navbar navbar-dark bg-dark">
+                <NavLink to="/" className="navbar-brand ml-20">SellItBuyIt</NavLink>
+                <Link to='/'><button className="btn btn-primary">Home</button></Link>
+            </nav>
+            <div className="jumbotron">
+            <form>
+                <div className="form-group">
+                    <label >Email address</label>
+                    <input type="text" className="form-control" id="email" placeholder="Enter email"/>
+                </div>
+                <div className="form-group">
+                    <label>Password</label>
+                    <input type="password" className="form-control" id="password" placeholder="Password"/>
+                </div>
+                <button className="btn btn-primary" onClick={(event)=>{
+                            event.preventDefault();
+                            const email = document.getElementById('email').value;
+                            const password = document.getElementById('password').value;
+                            if(email==="admin" && password==="Welcome@123"){
+                                this.setState({
+                                    verified:true,
+                                    wrongPassword:false
+                                })
+                            }
+                            else{
+                                this.setState({
+                                    verified:false,
+                                    wrongPassword:true
+                                })
+                            }
+    }}>Validate</button>
+                {this.state.verified
+                    &&
+                <Link to={{
+                    pathname:'/deletecomponent',
+                    verified:"verified"
+                }}><button type="submit" className="btn btn-success float-right">Go to Manage Page</button></Link>
+                }
+                {this.state.wrongPassword 
+                    &&
+                    <span className="alert alert-danger float-right">Inavlid Credentials</span>
+                }
+                </form>
+            </div>
+            </div>
+        )
+    }
+}
+
+export default AdminLogin;

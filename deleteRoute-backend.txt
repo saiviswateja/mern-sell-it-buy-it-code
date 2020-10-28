@@ -1,0 +1,22 @@
+const express = require('express');
+const Product = require('../Product');
+const Router = require('./createRoute');
+const router = express.Router();
+
+router.post('/deleteproduct',(req,res)=>{
+    console.log("It entered delete product");
+    console.log(req.body);
+    Product.deleteOne({_id:req.body._id},(err,prod)=>{
+        console.log("It came to delete");
+        if(err){
+            console.log(err);
+        }
+        else{
+            console.log(prod);
+        }
+    })
+    console.log("It deleted");
+    return res.json("bro it successfull");
+});
+
+module.exports = router;
